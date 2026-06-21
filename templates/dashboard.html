@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | FormForge</title>
+
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --secondary: #06b6d4;
+            --success: #16a34a;
+            --warning: #f59e0b;
+            --danger: #dc2626;
+            --purple: #7c3aed;
+            --dark: #111827;
+            --muted: #6b7280;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --border: #e5e7eb;
+            --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+            --radius: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(79, 70, 229, 0.16), transparent 34%),
+                radial-gradient(circle at top right, rgba(6, 182, 212, 0.14), transparent 30%),
+                var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        .dashboard {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+            padding-top: 34px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: grid;
+            place-items: center;
+            color: white;
+            font-size: 26px;
+            box-shadow: var(--shadow);
+        }
+
+        .brand h1 {
+            font-size: 28px;
+            line-height: 1.1;
+            letter-spacing: -0.5px;
+        }
+
+        .brand p {
+            color: var(--muted);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #4f46e5, #06b6d4);
+            color: white;
+            border-radius: 28px;
+            padding: 36px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 26px;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.14);
+            right: -80px;
+            top: -80px;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 680px;
+        }
+
+        .hero h2 {
+            font-size: clamp(28px, 5vw, 48px);
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            font-size: 17px;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 24px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            border: none;
+            border-radius: 14px;
+            padding: 12px 18px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.16);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary);
+        }
+
+        .btn-dark {
+            background: var(--dark);
+            color: white;
+        }
+
+        .btn-build {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-preview {
+            background: var(--purple);
+            color: white;
+        }
+
+        .btn-view {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-duplicate {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-delete {
+            background: var(--danger);
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.86);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(229, 231, 235, 0.9);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card span {
+            display: block;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 8px;
+        }
+
+        .stat-card strong {
+            font-size: 30px;
+            color: var(--dark);
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+        }
+
+        .section-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .section-head h2 {
+            font-size: 22px;
+            letter-spacing: -0.3px;
+        }
+
+        .section-head p {
+            color: var(--muted);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .template-grid,
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .template-card {
+            text-decoration: none;
+            color: inherit;
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            transition: all 0.2s ease;
+            min-height: 150px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .template-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(6, 182, 212, 0.08));
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .template-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
+            border-color: rgba(79, 70, 229, 0.35);
+        }
+
+        .template-card:hover::before {
+            opacity: 1;
+        }
+
+        .template-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .template-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            font-size: 22px;
+            margin-bottom: 14px;
+            background: #eef2ff;
+        }
+
+        .template-card h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .template-card p {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 240px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 13px 16px 13px 42px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            outline: none;
+            font-size: 14px;
+            background: white;
+            color: var(--dark);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+        }
+
+        .search-box::before {
+            content: "🔎";
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+        }
+
+        .form-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .form-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 34px rgba(15, 23, 42, 0.12);
+        }
+
+        .form-card h3 {
+            font-size: 20px;
+            line-height: 1.3;
+        }
+
+        .form-card p {
+            color: var(--muted);
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .meta-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .badge-live {
+            background: rgba(22, 163, 74, 0.12);
+            color: var(--success);
+        }
+
+        .badge-stopped {
+            background: rgba(220, 38, 38, 0.12);
+            color: var(--danger);
+        }
+
+        .badge-empty {
+            background: rgba(107, 114, 128, 0.12);
+            color: var(--muted);
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: auto;
+            padding-top: 4px;
+        }
+
+        .actions .btn {
+            padding: 10px 12px;
+            font-size: 13px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 42px 20px;
+            border: 1px dashed #cbd5e1;
+            border-radius: var(--radius);
+            background: rgba(248, 250, 252, 0.75);
+            color: var(--muted);
+        }
+
+        .empty-state h3 {
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .empty-state.hidden {
+            display: none;
+        }
+
+        .footer {
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 28px;
+        }
+
+        @media (max-width: 980px) {
+            .stats-grid,
+            .template-grid,
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .topbar,
+            .section-head {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .dashboard {
+                width: min(100% - 22px, 1180px);
+                padding-top: 20px;
+            }
+
+            .hero {
+                padding: 26px;
+                border-radius: 22px;
+            }
+
+            .brand h1 {
+                font-size: 23px;
+            }
+
+            .stats-grid,
+            .template-grid,
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                padding: 18px;
+                border-radius: 20px;
+            }
+
+            .actions .btn {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard">
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-icon">📝</div>
+                <div>
+                    <h1>FormForge</h1>
+                    <p>Build, preview, duplicate, and manage forms from one dashboard.</p>
+                </div>
+            </div>
+
+            <a href="/create-form" class="btn btn-dark">
+                ✨ Create New Form
+            </a>
+        </header>
+
+        {% set stats = namespace(forms=0, fields=0, responses=0, formsWithResponses=0, activeForms=0) %}
+
+        {% for item in forms %}
+            {% set stats.forms = stats.forms + 1 %}
+            {% set stats.fields = stats.fields + item.field_count %}
+            {% set stats.responses = stats.responses + item.response_count %}
+
+            {% if item.response_count > 0 %}
+                {% set stats.formsWithResponses = stats.formsWithResponses + 1 %}
+            {% endif %}
+
+            {% if item["active"] %}
+                {% set stats.activeForms = stats.activeForms + 1 %}
+            {% endif %}
+        {% endfor %}
+
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Manage all your forms in one place</h2>
+                <p>
+                    Create custom forms, start with ready-made templates, preview your designs,
+                    collect responses, and keep everything organized from a clean dashboard.
+                </p>
+                <a href="/create-form" class="btn btn-primary">
+                    Start Building
+                </a>
+            </div>
+        </section>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <span>Total Forms</span>
+                <strong>{{ stats.forms }}</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Total Fields</span>
+                <strong>{{ stats.fields }}</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Total Responses</span>
+                <strong>{{ stats.responses }}</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Active Forms</span>
+                <strong>{{ stats.activeForms }}</strong>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-head">
+                <div>
+                    <h2>Quick Templates</h2>
+                    <p>Start faster using a pre-built form layout.</p>
+                </div>
+            </div>
+
+            <div class="template-grid">
+                <a href="/template/student" class="template-card">
+                    <div class="template-icon">🎓</div>
+                    <h3>Student Registration</h3>
+                    <p>Collect student details like name, email, mobile number, and branch.</p>
+                </a>
+
+                <a href="/template/feedback" class="template-card">
+                    <div class="template-icon">⭐</div>
+                    <h3>Feedback Form</h3>
+                    <p>Collect ratings and comments from users, students, or customers.</p>
+                </a>
+
+                <a href="/template/event" class="template-card">
+                    <div class="template-icon">📅</div>
+                    <h3>Event Registration</h3>
+                    <p>Register participants for events with essential contact details.</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-head">
+                <div>
+                    <h2>My Forms</h2>
+                    <p>View and manage your created forms.</p>
+                </div>
+            </div>
+
+            <div class="toolbar">
+                <div class="search-box">
+                    <input
+                        id="formSearch"
+                        type="search"
+                        placeholder="Search forms by title or description..."
+                    >
+                </div>
+            </div>
+
+            {% if forms %}
+                <div class="form-grid">
+                    {% for form in forms %}
+                        <article class="form-card">
+                            <h3>{{ form.title }}</h3>
+                            <p>{{ form.description }}</p>
+
+                            <div class="meta-row">
+                                <span class="badge">ID: {{ form.id }}</span>
+                                <span class="badge">{{ form.field_count }} Fields</span>
+
+                                {% if form["active"] %}
+                                    <span class="badge badge-live">Accepting Responses</span>
+                                {% else %}
+                                    <span class="badge badge-stopped">Stopped</span>
+                                {% endif %}
+
+                                {% if form.response_count > 0 %}
+                                   <span class="badge badge-live">
+                                        {{ form.response_count }} Responses
+                                    </span>
+                                {% else %}
+                                    <span class="badge badge-empty">No Responses</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="actions">
+                                <a href="/build-form/{{ form.id }}" class="btn btn-build">
+                                    Build
+                                </a>
+
+                                <a href="/preview-form/{{ form.id }}" class="btn btn-preview">
+                                    Preview
+                                </a>
+
+                                <a href="/view-responses/{{ form.id }}" class="btn btn-view">
+                                    Responses
+                                </a>
+
+                                <a href="/duplicate-form/{{ form.id }}" class="btn btn-duplicate">
+                                    Duplicate
+                                </a>
+
+                                {% if form["active"] %}
+                                    <a
+                                        href="/stop-form/{{ form.id }}"
+                                        class="btn btn-delete"
+                                        onclick="return confirm('Stop accepting responses for this form?');"
+                                    >
+                                        Stop Form
+                                    </a>
+                                {% else %}
+                                    <a href="/resume-form/{{ form.id }}" class="btn btn-duplicate">
+                                        Resume Form
+                                    </a>
+                                {% endif %}
+
+                                <a
+                                    href="/delete-form/{{ form.id }}"
+                                    class="btn btn-delete"
+                                    onclick="return confirm('Are you sure you want to delete this form?');"
+                                >
+                                    Delete
+                                </a>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+
+                <div id="emptySearch" class="empty-state hidden" style="margin-top: 16px;">
+                    <h3>No matching forms found</h3>
+                    <p>Try searching with a different title or description.</p>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>No forms created yet</h3>
+                    <p>Create your first form or start with a quick template.</p>
+                    <br>
+                    <a href="/create-form" class="btn btn-build">
+                        Create Your First Form
+                    </a>
+                </div>
+            {% endif %}
+        </section>
+
+        <footer class="footer">
+            FormForge Dashboard
+        </footer>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById("formSearch");
+        const formCards = document.querySelectorAll(".form-card");
+        const emptySearch = document.getElementById("emptySearch");
+
+        if (searchInput) {
+            searchInput.addEventListener("input", function () {
+                const searchText = searchInput.value.toLowerCase().trim();
+                let visibleCount = 0;
+
+                formCards.forEach(function (card) {
+                    const cardText = card.textContent.toLowerCase();
+
+                    if (cardText.includes(searchText)) {
+                        card.style.display = "flex";
+                        visibleCount++;
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+
+                if (emptySearch) {
+                    emptySearch.classList.toggle("hidden", visibleCount > 0);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responses | {{ form.title }}</title>
+
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --secondary: #06b6d4;
+            --success: #16a34a;
+            --dark: #111827;
+            --muted: #6b7280;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --border: #e5e7eb;
+            --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+            --radius: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(6, 182, 212, 0.12), transparent 30%),
+                linear-gradient(180deg, #f8fafc 0%, #ecfeff 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        .page {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+            padding-top: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: clamp(28px, 4vw, 40px);
+            letter-spacing: -0.7px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            border-radius: 14px;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 800;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.14);
+        }
+
+        .btn-primary {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-ghost {
+            background: white;
+            color: var(--dark);
+            border: 1px solid var(--border);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card span {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .stat-card strong {
+            font-size: 30px;
+            color: var(--dark);
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .panel-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .panel-head h2 {
+            font-size: 24px;
+            letter-spacing: -0.3px;
+        }
+
+        .panel-head p {
+            color: var(--muted);
+            margin-top: 4px;
+            line-height: 1.5;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            padding: 8px 12px;
+            background: #e0f2fe;
+            color: #0369a1;
+            font-size: 13px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .response-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .response-card {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+        }
+
+        .response-card-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .response-card-head h3 {
+            font-size: 18px;
+        }
+
+        .response-card-head span {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .answer-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .answer-item {
+            display: grid;
+            grid-template-columns: minmax(160px, 0.85fr) minmax(220px, 1.15fr);
+            gap: 14px;
+            padding: 14px;
+            border-radius: 14px;
+            background: white;
+            border: 1px solid #edf2f7;
+        }
+
+        .answer-item strong {
+            color: #334155;
+            line-height: 1.5;
+        }
+
+        .answer-item p {
+            color: var(--dark);
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        .empty-state {
+            border: 1px dashed #cbd5e1;
+            border-radius: var(--radius);
+            padding: 38px;
+            text-align: center;
+            color: var(--muted);
+            background: #f8fafc;
+        }
+
+        .empty-state h3 {
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 980px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .answer-item {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .page {
+                width: min(100% - 22px, 1180px);
+                padding-top: 20px;
+            }
+
+            .header,
+            .panel-head {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .actions,
+            .btn {
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="page">
+        <header class="header">
+            <div>
+                <h1>{{ form.title }} Responses</h1>
+                <p>Review submitted answers and export the response data when needed.</p>
+            </div>
+
+            <div class="actions">
+                <a href="/export-responses/{{ form.id }}" class="btn btn-primary">
+                    Export CSV
+                </a>
+
+                <a href="/build-form/{{ form.id }}" class="btn btn-ghost">
+                    Back To Builder
+                </a>
+            </div>
+        </header>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <span>Total Responses</span>
+                <strong>{{  form.response_count }}</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Total Fields</span>
+                <strong>{{ form.field_count  }}</strong>
+            </div>
+
+            <div class="stat-card">
+                <span>Form ID</span>
+                <strong>{{ form.id }}</strong>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-head">
+                <div>
+                    <h2>Submitted Responses</h2>
+                    <p>Each response is grouped by submission.</p>
+                </div>
+
+                <span class="badge">
+                    {{  form.response_count}} submissions
+                </span>
+            </div>
+
+            {% if form.responses %}
+                <div class="response-list">
+                    {% for response in form.responses %}
+                        <article class="response-card">
+                            <div class="response-card-head">
+                                <h3>Response {{ loop.index }}</h3>
+                                <span>Submission #{{ loop.index }}</span>
+                            </div>
+
+                            <div class="answer-grid">
+                                {% for question, answer in response.items() %}
+                                    <div class="answer-item">
+                                        <strong>{{ question }}</strong>
+                                        <p>
+                                            {% if answer %}
+                                                {{ answer }}
+                                            {% else %}
+                                                —
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>No responses yet</h3>
+                    <p>Share the form link from the builder page to start collecting responses.</p>
+                </div>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

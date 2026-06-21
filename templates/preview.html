@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview | {{ form.title }}</title>
+
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --secondary: #06b6d4;
+            --dark: #111827;
+            --muted: #6b7280;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --border: #e5e7eb;
+            --shadow: 0 18px 45px rgba(15, 23, 42, 0.1);
+            --radius: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background:
+                radial-gradient(circle at top right, rgba(79, 70, 229, 0.16), transparent 30%),
+                linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 34px 16px;
+        }
+
+        .preview-shell {
+            width: min(760px, 100%);
+            margin: 0 auto;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .preview-header h1 {
+            font-size: 28px;
+            letter-spacing: -0.5px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            border-radius: 14px;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 800;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.14);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-ghost {
+            background: white;
+            color: var(--dark);
+            border: 1px solid var(--border);
+        }
+
+        .form-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: clamp(24px, 5vw, 42px);
+            box-shadow: var(--shadow);
+        }
+
+        .form-title {
+            margin-bottom: 18px;
+        }
+
+        .form-title h2 {
+            font-size: clamp(26px, 5vw, 40px);
+            line-height: 1.15;
+            letter-spacing: -0.8px;
+            margin-bottom: 10px;
+        }
+
+        .form-title p {
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .note {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            padding: 8px 12px;
+            background: #eef2ff;
+            color: var(--primary-dark);
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 24px;
+        }
+
+        .form-field {
+            padding: 18px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .form-field:first-of-type {
+            border-top: none;
+        }
+
+        .form-field label {
+            display: block;
+            font-size: 15px;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .error-message {
+            display: block;
+            border: 1px solid rgba(220, 38, 38, 0.25);
+            border-radius: 16px;
+            padding: 12px 14px;
+            margin-bottom: 18px;
+            background: rgba(220, 38, 38, 0.08);
+            color: #991b1b;
+            font-weight: 800;
+        }
+
+        .choice-group {
+            display: grid;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .choice-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 12px 14px;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .choice-option:hover {
+            border-color: rgba(79, 70, 229, 0.45);
+            background: white;
+        }
+
+        .choice-option input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+        }
+
+        .empty-inline {
+            color: var(--muted);
+            border: 1px dashed #cbd5e1;
+            border-radius: 14px;
+            padding: 12px 14px;
+            background: #f8fafc;
+        }
+
+        .required {
+            color: var(--danger);
+            margin-left: 3px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 13px 14px;
+            font-size: 15px;
+            outline: none;
+            background: #f8fafc;
+            color: var(--dark);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+        }
+
+        .submit-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            border-top: 1px solid var(--border);
+            padding-top: 24px;
+            margin-top: 10px;
+        }
+
+        .empty-state {
+            border: 1px dashed #cbd5e1;
+            border-radius: var(--radius);
+            padding: 34px;
+            text-align: center;
+            color: var(--muted);
+            background: #f8fafc;
+        }
+
+        .closed-state {
+            border: 1px solid rgba(220, 38, 38, 0.25);
+            border-radius: var(--radius);
+            padding: 34px;
+            text-align: center;
+            color: #7f1d1d;
+            background: rgba(220, 38, 38, 0.08);
+        }
+
+        .closed-state h3 {
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .empty-state h3 {
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 22px 12px;
+            }
+
+            .preview-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .submit-row {
+                align-items: stretch;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="preview-shell">
+        <header class="preview-header">
+            <h1>Form Preview</h1>
+
+            <a href="/build-form/{{ form.id }}" class="btn btn-ghost">
+                Back To Builder
+            </a>
+        </header>
+
+        <section class="form-card">
+            <div class="form-title">
+                <h2>{{ form.title }}</h2>
+                <p>{{ form.description }}</p>
+            </div>
+
+            {% if form["active"] %}
+                {% if form.fields %}
+                <div class="note">
+                    Fields marked with * are required
+                </div>
+
+                {% if error %}
+                    <span class="error-message">
+                        {{ error }}
+                    </span>
+                {% endif %}
+
+                <form action="/submit-form/{{ form.id }}" method="POST">
+                    {% for field in form.fields %}
+                        <div class="form-field">
+                            <label for="field-{{ loop.index }}">
+                                {{ field.question }}
+                                {% if field.required %}
+                                    <span class="required">*</span>
+                                {% endif %}
+                            </label>
+
+                            {% if field.type == "Text" %}
+                                <input
+                                    id="field-{{ loop.index }}"
+                                    type="text"
+                                    name="{{ field.question }}"
+                                    {% if field.required %}required{% endif %}
+                                >
+
+                            {% elif field.type == "Email" %}
+                                <input
+                                    id="field-{{ loop.index }}"
+                                    type="email"
+                                    name="{{ field.question }}"
+                                    {% if field.required %}required{% endif %}
+                                >
+
+                            {% elif field.type == "Number" %}
+                                <input
+                                    id="field-{{ loop.index }}"
+                                    type="number"
+                                    name="{{ field.question }}"
+                                    {% if field.required %}required{% endif %}
+                                >
+
+                            {% elif field.type == "Textarea" %}
+                                <textarea
+                                    id="field-{{ loop.index }}"
+                                    name="{{ field.question }}"
+                                    {% if field.required %}required{% endif %}
+                                ></textarea>
+
+                            {% elif field.type == "Dropdown" %}
+                                <select
+                                    id="field-{{ loop.index }}"
+                                    name="{{ field.question }}"
+                                    {% if field.required %}required{% endif %}
+                                >
+                                    <option value="">
+                                        Select an option
+                                    </option>
+
+                                    {% for option in field.options %}
+                                        <option value="{{ option }}">
+                                            {{ option }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+
+                            {% elif field.type == "Radio" %}
+                                <div class="choice-group">
+                                    {% if field.options %}
+                                        {% for option in field.options %}
+                                            <label class="choice-option">
+                                                <input
+                                                    type="radio"
+                                                    name="{{ field.question }}"
+                                                    value="{{ option }}"
+                                                    {% if field.required %}required{% endif %}
+                                                >
+                                                <span>{{ option }}</span>
+                                            </label>
+                                        {% endfor %}
+                                    {% else %}
+                                        <p class="empty-inline">No options added for this field yet.</p>
+                                    {% endif %}
+                                </div>
+
+                            {% elif field.type == "Checkbox" %}
+                                <div class="choice-group">
+                                    {% if field.options %}
+                                        {% for option in field.options %}
+                                            <label class="choice-option">
+                                                <input
+                                                    type="checkbox"
+                                                    name="{{ field.question }}"
+                                                    value="{{ option }}"
+                                                >
+                                                <span>{{ option }}</span>
+                                            </label>
+                                        {% endfor %}
+                                    {% else %}
+                                        <p class="empty-inline">No options added for this field yet.</p>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="submit-row">
+                        <button type="submit" class="btn btn-primary">
+                            Submit Form
+                        </button>
+
+                        <a href="/build-form/{{ form.id }}" class="btn btn-ghost">
+                            Back To Builder
+                        </a>
+                    </div>
+                </form>
+            {% else %}
+                <div class="empty-state">
+                    <h3>No questions added yet</h3>
+                    <p>This form does not have any fields. Add questions from the builder page.</p>
+                </div>
+            {% endif %}
+            {% else %}
+                <div class="closed-state">
+                    <h3>This form is currently stopped</h3>
+                    <p>The form owner has paused responses. Please try again later.</p>
+                </div>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>
